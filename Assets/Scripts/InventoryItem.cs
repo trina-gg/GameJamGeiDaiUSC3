@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// 挂在场景里的“可拾取物体”上（SpriteRenderer + Collider2D）
-/// 单击时，如果当前 panel 是激活的，就把自己交给 InventoryManager
+/// 单击时，如果当前 panel 是激活的，就把自己交给 InventoryManager。
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class InventoryItem : MonoBehaviour
@@ -11,6 +12,10 @@ public class InventoryItem : MonoBehaviour
     public string itemId;            // 用来和 ItemReceiver 的 acceptsItemId 对上
     public Sprite iconSprite;        // 显示在 Inventory UI 里的图标（可以和本体 sprite 一样）
 
+    [Header("Events")]
+    [Tooltip("当物体被成功拾取（加入 Inventory）后触发一次。")]
+    public UnityEvent onPickedUp;
+
     [Header("Cached World State (自动填)")]
     [HideInInspector] public Vector3 originalLocalPos;
     [HideInInspector] public Vector3 originalLocalScale;
@@ -18,7 +23,6 @@ public class InventoryItem : MonoBehaviour
 
     SpriteRenderer _renderer;
     Collider2D _collider;
-    bool _isInWorld = true;
 
     void Awake()
     {
@@ -28,7 +32,6 @@ public class InventoryItem : MonoBehaviour
 
     void Start()
     {
-        // 初始时缓存在世界中的相对信息（在某个 SpritePanel 下面）
         CacheWorldTransform();
     }
 
@@ -44,7 +47,9 @@ public class InventoryItem : MonoBehaviour
 
     void OnMouseDown()
     {
-        // 只允许在“当前激活的面板”中拾取物品
+        Debug.Log("Rocket clicked!");
+        
+        // 只允许在当前激活 panel 中拾取：
         SpritePanel myPanel = GetComponentInParent<SpritePanel>();
         if (myPanel == null || SpritePanelManager.Instance.currentPanel != myPanel)
             return;
@@ -53,26 +58,21 @@ public class InventoryItem : MonoBehaviour
         if (InventoryManager.Instance == null || InventoryManager.Instance.HasItem)
             return;
 
+        // 请求加入 inventory
         InventoryManager.Instance.PickupItem(this);
+
+        // 拾取成功后触发事件（比如切换背景）
+        onPickedUp?.Invoke();
     }
 
-    /// <summary>
-    /// 从世界中“隐藏”这个物体（本体还留在原 panel 里，只是不可见，不参与碰撞）
-    /// </summary>
     public void HideInWorld()
     {
-        _isInWorld = false;
         if (_renderer != null) _renderer.enabled = false;
         if (_collider != null) _collider.enabled = false;
     }
 
-    /// <summary>
-    /// 把物体显示在世界中，并设置父级和局部位置/缩放。
-    /// 这样就会随着所在 SpritePanel 一起缩放。
-    /// </summary>
     public void ShowInWorld(Transform parent, Vector3 localPos, Vector3? localScaleOverride = null)
     {
-        _isInWorld = true;
         transform.SetParent(parent);
         transform.localPosition = localPos;
         transform.localScale = localScaleOverride ?? originalLocalScale;
@@ -81,9 +81,6 @@ public class InventoryItem : MonoBehaviour
         if (_collider != null) _collider.enabled = true;
     }
 
-    /// <summary>
-    /// 如果你想把物体放回原来的 panel / 原先的位置
-    /// </summary>
     public void RestoreToOriginal()
     {
         ShowInWorld(originalParent, originalLocalPos, originalLocalScale);

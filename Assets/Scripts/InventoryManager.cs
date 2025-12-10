@@ -1,26 +1,28 @@
+// InventoryManager.cs
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 简单的单格 Inventory：同时只允许有一个物体。
-/// 负责：
-/// - 接收 InventoryItem 的 Pickup 请求
-/// - 管理 UI 图标
-/// - 在物品成功使用后清空 inventory
+/// 简单的单格 Inventory：
+/// - 同时只允许有一个物体
+/// - itemIconImage：只负责显示物品图标（背景槽请用单独的 Image）
 /// </summary>
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
 
     [Header("UI References")]
-    public Image inventorySlotImage;          // UI 上的图标 Image（Screen Space - Overlay Canvas 下）
+    [Tooltip("只负责显示物品图标的 Image，不要把背景槽拖进来。")]
+    public Image itemIconImage;
 
     [Header("Runtime State")]
-    public InventoryItem currentItem;         // 当前拿着的世界物体（隐藏中）
+    [Tooltip("当前被拿在 inventory 里的世界物体（本体隐藏在场景中）。")]
+    public InventoryItem currentItem;
     public bool HasItem => currentItem != null;
 
     void Awake()
     {
+        // 单例
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -28,14 +30,16 @@ public class InventoryManager : MonoBehaviour
         }
         Instance = this;
 
-        if (inventorySlotImage != null)
+        // 游戏开始时，物品图标是隐藏的（背景槽由别的 Image 负责显示）
+        if (itemIconImage != null)
         {
-            inventorySlotImage.enabled = false;
+            itemIconImage.enabled = false;
+            itemIconImage.sprite = null;
         }
     }
 
     /// <summary>
-    /// 由 InventoryItem 调用：把物体放进 inventory
+    /// 由 InventoryItem 调用：把物体放进 inventory。
     /// </summary>
     public void PickupItem(InventoryItem item)
     {
@@ -44,14 +48,16 @@ public class InventoryManager : MonoBehaviour
         currentItem = item;
         currentItem.HideInWorld();
 
-        if (inventorySlotImage != null)
+        if (itemIconImage != null)
         {
-            inventorySlotImage.sprite = item.iconSprite;
-            inventorySlotImage.enabled = true;
+            itemIconImage.sprite = item.iconSprite;
+            itemIconImage.enabled = true;   // 显示物品图标
         }
 
-        // 如果 InventorySlot 上挂了 InventoryDragUI，可以让它知道当前有物品
-        var drag = inventorySlotImage.GetComponent<InventoryDragUI>();
+        var drag = itemIconImage != null
+            ? itemIconImage.GetComponent<InventoryDragUI>()
+            : null;
+
         if (drag != null)
         {
             drag.SetHasItem(true);
@@ -70,36 +76,34 @@ public class InventoryManager : MonoBehaviour
         bool accepted = receiver.TryPlaceItem(currentItem);
         if (!accepted) return;
 
-        // UI 清空
-        if (inventorySlotImage != null)
-        {
-            inventorySlotImage.enabled = false;
-        }
-
-        var drag = inventorySlotImage.GetComponent<InventoryDragUI>();
-        if (drag != null)
-        {
-            drag.SetHasItem(false);
-        }
-
-        currentItem = null;
+        // 物品已经被正确使用，UI 清空
+        ClearIconAndState();
     }
 
     /// <summary>
-    /// 如果你想丢弃/重置物品
+    /// 如果你想丢弃/重置物品（比如玩家取消使用），
+    /// 会把物品放回原来的 panel 位置。
     /// </summary>
     public void DropAndRestoreCurrentItem()
     {
         if (!HasItem) return;
 
         currentItem.RestoreToOriginal();
+        ClearIconAndState();
+    }
 
-        if (inventorySlotImage != null)
+    void ClearIconAndState()
+    {
+        if (itemIconImage != null)
         {
-            inventorySlotImage.enabled = false;
+            itemIconImage.enabled = false;  // 图标隐藏（背景槽仍然在）
+            itemIconImage.sprite = null;
         }
 
-        var drag = inventorySlotImage.GetComponent<InventoryDragUI>();
+        var drag = itemIconImage != null
+            ? itemIconImage.GetComponent<InventoryDragUI>()
+            : null;
+
         if (drag != null)
         {
             drag.SetHasItem(false);
