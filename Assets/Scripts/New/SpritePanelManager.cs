@@ -303,6 +303,17 @@ public class SpritePanelManager : MonoBehaviour
 
         SpritePanel parentPanel = currentPanel.parentPanel;
 
+        // Get sprite renderer for radial fade
+        SpriteRenderer sr = currentPanel.GetComponent<SpriteRenderer>();
+        Material mat = null;
+        bool hasRadialFade = false;
+
+        if (sr != null)
+        {
+            mat = sr.material;
+            hasRadialFade = mat.HasProperty("_FadeProgress");
+        }
+
         currentPanel.RestoreOriginalTransform();
         parentPanel.gameObject.SetActive(true);
 
@@ -320,6 +331,9 @@ public class SpritePanelManager : MonoBehaviour
         Vector3 endCamPos = new Vector3(0, 0, -10);
         float endCamSize = defaultCameraSize;
 
+        // Fade out completes at 20% of zoom out (reverse of zoom in)
+        float fadeEndPercent = 0.20f;
+
         float timer = 0f;
         while (timer < zoomOutDuration)
         {
@@ -330,11 +344,42 @@ public class SpritePanelManager : MonoBehaviour
             mainCamera.transform.position = Vector3.Lerp(startCamPos, endCamPos, smoothT);
             mainCamera.orthographicSize = Mathf.Lerp(startCamSize, endCamSize, smoothT);
 
+            // Radial fade out (reverse - from 1 to 0) at the START of zoom out
+            if (t <= fadeEndPercent)
+            {
+                float fadeT = t / fadeEndPercent;
+                fadeT = Mathf.Clamp01(fadeT);
+                float fadeValue = 1f - fadeT; // Reverse: 1 -> 0
+
+                if (hasRadialFade)
+                {
+                    mat.SetFloat("_FadeProgress", fadeValue);
+                }
+                else if (sr != null)
+                {
+                    Color c = sr.color;
+                    c.a = fadeValue;
+                    sr.color = c;
+                }
+            }
+
             yield return null;
         }
 
         mainCamera.transform.position = endCamPos;
         mainCamera.orthographicSize = endCamSize;
+
+        // Ensure fully faded out
+        if (hasRadialFade)
+        {
+            mat.SetFloat("_FadeProgress", 0f);
+        }
+        else if (sr != null)
+        {
+            Color c = sr.color;
+            c.a = 0f;
+            sr.color = c;
+        }
 
         currentPanel = parentPanel;
         isTransitioning = false;

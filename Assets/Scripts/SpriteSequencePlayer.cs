@@ -26,16 +26,26 @@ public class SpriteSequencePlayer : MonoBehaviour
     [Tooltip("播放完成后是否自动隐藏 SpriteRenderer")]
     public bool hideOnComplete = true;
 
+    [Header("Audio")]
+    [Tooltip("Sound to play when animation starts")]
+    public AudioClip soundEffect;
+    [Range(0f, 1f)]
+    public float soundVolume = 1f;
+
     SpriteRenderer _sr;
+    AudioSource _audioSource;
     Coroutine _playRoutine;
 
     void Awake()
     {
         _sr = GetComponent<SpriteRenderer>();
 
+        // Create audio source for sound effect
+        _audioSource = gameObject.AddComponent<AudioSource>();
+        _audioSource.playOnAwake = false;
+
         if (startHidden)
         {
-            // 一开始完全不显示火箭
             _sr.enabled = false;
         }
         else
@@ -73,6 +83,14 @@ public class SpriteSequencePlayer : MonoBehaviour
 
         // 播放前确保可见
         _sr.enabled = true;
+
+        // Play sound effect when animation starts
+        if (soundEffect != null && _audioSource != null)
+        {
+            _audioSource.clip = soundEffect;
+            _audioSource.volume = soundVolume;
+            _audioSource.Play();
+        }
 
         while (index < frames.Length)
         {

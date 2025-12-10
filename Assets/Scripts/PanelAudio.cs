@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PanelAudio : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class PanelAudio : MonoBehaviour
     public float fadeOutDuration = 1f;
 
     AudioSource audioSource;
+    SpritePanel myPanel;
+    bool isPlaying = false;
+
     static PanelAudio currentlyPlaying;
 
     void Awake()
@@ -22,64 +26,103 @@ public class PanelAudio : MonoBehaviour
         audioSource.loop = loop;
         audioSource.volume = 0f;
         audioSource.playOnAwake = false;
+
+        myPanel = GetComponent<SpritePanel>();
     }
 
-    void OnEnable()
+    void Start()
     {
-        // When this panel becomes active, play its music
-        if (music != null)
-        {
-            // Fade out previous panel's music
-            if (currentlyPlaying != null && currentlyPlaying != this)
-            {
-                currentlyPlaying.FadeOut();
-            }
+        // Check if this is the starting panel
+        StartCoroutine(CheckInitialPanel());
+    }
 
-            currentlyPlaying = this;
-            FadeIn();
+    IEnumerator CheckInitialPanel()
+    {
+        // Wait one frame for SpritePanelManager to initialize
+        yield return null;
+
+        if (SpritePanelManager.Instance != null &&
+            SpritePanelManager.Instance.currentPanel == myPanel)
+        {
+            PlayMusic();
         }
     }
 
-    void OnDisable()
+    void Update()
     {
-        // Stop audio when panel is hidden
-        if (audioSource != null && audioSource.isPlaying)
+        if (SpritePanelManager.Instance == null || myPanel == null) return;
+
+        bool isCurrentPanel = (SpritePanelManager.Instance.currentPanel == myPanel);
+
+        // Started being current panel
+        if (isCurrentPanel && !isPlaying)
         {
-            audioSource.Stop();
+            PlayMusic();
+        }
+        // Stopped being current panel
+        else if (!isCurrentPanel && isPlaying)
+        {
+            StopMusic();
         }
     }
 
-    public void FadeIn()
+    void PlayMusic()
     {
-        if (audioSource == null || music == null) return;
+        if (music == null || isPlaying) return;
 
+        // Stop previous panel's music
+        if (currentlyPlaying != null && currentlyPlaying != this)
+        {
+            currentlyPlaying.StopMusic();
+        }
+
+        currentlyPlaying = this;
+        isPlaying = true;
+
+        StopAllCoroutines();
         audioSource.volume = 0f;
         audioSource.Play();
         StartCoroutine(FadeCoroutine(0f, volume, fadeInDuration));
+
+        Debug.Log("Playing music for: " + gameObject.name);
     }
 
-    public void FadeOut()
+    void StopMusic()
     {
-        if (audioSource == null) return;
+        if (!isPlaying) return;
 
-        StartCoroutine(FadeCoroutine(audioSource.volume, 0f, fadeOutDuration));
+        isPlaying = false;
+        StopAllCoroutines();
+        StartCoroutine(FadeOutAndStop());
+
+        Debug.Log("Stopping music for: " + gameObject.name);
     }
 
-    System.Collections.IEnumerator FadeCoroutine(float from, float to, float duration)
+    IEnumerator FadeOutAndStop()
+    {
+        float startVol = audioSource.volume;
+        float timer = 0f;
+
+        while (timer < fadeOutDuration)
+        {
+            timer += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(startVol, 0f, timer / fadeOutDuration);
+            yield return null;
+        }
+
+        audioSource.volume = 0f;
+        audioSource.Stop();
+    }
+
+    IEnumerator FadeCoroutine(float from, float to, float duration)
     {
         float timer = 0f;
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            float t = timer / duration;
-            audioSource.volume = Mathf.Lerp(from, to, t);
+            audioSource.volume = Mathf.Lerp(from, to, timer / duration);
             yield return null;
         }
         audioSource.volume = to;
-
-        if (to == 0f)
-        {
-            audioSource.Stop();
-        }
     }
 }

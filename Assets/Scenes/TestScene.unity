@@ -215,6 +215,8 @@ MonoBehaviour:
   frameRate: 6
   startHidden: 1
   hideOnComplete: 0
+  soundEffect: {fileID: 0}
+  soundVolume: 1
 --- !u!212 &79668196
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -423,6 +425,7 @@ GameObject:
   - component: {fileID: 276012212}
   - component: {fileID: 276012211}
   - component: {fileID: 276012213}
+  - component: {fileID: 276012214}
   m_Layer: 0
   m_Name: EndGame
   m_TagString: Untagged
@@ -541,6 +544,23 @@ MonoBehaviour:
   frameRate: 10
   loop: 1
   playOnStart: 1
+--- !u!114 &276012214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276012209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f118658c022bf5540a9e25e6cf001edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelAudio
+  music: {fileID: 8300000, guid: cd7bf19057df6a84b8f7a33324ea2c22, type: 3}
+  loop: 1
+  volume: 1
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &323936175
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,6 +1754,8 @@ MonoBehaviour:
   frameRate: 6
   startHidden: 1
   hideOnComplete: 0
+  soundEffect: {fileID: 0}
+  soundVolume: 1
 --- !u!212 &831262680
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1804,6 +1826,7 @@ GameObject:
   - component: {fileID: 961954417}
   - component: {fileID: 961954416}
   - component: {fileID: 961954419}
+  - component: {fileID: 961954420}
   m_Layer: 0
   m_Name: BeachIMage
   m_TagString: Untagged
@@ -1915,6 +1938,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PanelBackgroundVariant
   defaultSprite: {fileID: 0}
   withoutRocketSprite: {fileID: 7021950030729577124, guid: e1735e6886a243d4da4b773b6f48b97b, type: 3}
+--- !u!114 &961954420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961954415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f118658c022bf5540a9e25e6cf001edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelAudio
+  music: {fileID: 8300000, guid: 1af9046dc2d367946a6a09ec4490a308, type: 3}
+  loop: 1
+  volume: 1
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &984931400
 GameObject:
   m_ObjectHideFlags: 0
@@ -2340,6 +2380,8 @@ MonoBehaviour:
   frameRate: 6
   startHidden: 1
   hideOnComplete: 1
+  soundEffect: {fileID: 8300000, guid: 12b7528977ef2e94cb19222fd2b432c0, type: 3}
+  soundVolume: 1
 --- !u!212 &1048198771
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4269,6 +4311,7 @@ GameObject:
   - component: {fileID: 1889474779}
   - component: {fileID: 1889474781}
   - component: {fileID: 1889474780}
+  - component: {fileID: 1889474782}
   m_Layer: 0
   m_Name: QuietRoom
   m_TagString: Untagged
@@ -4371,6 +4414,23 @@ MonoBehaviour:
   originalPosition: {x: 0, y: 0, z: 0}
   originalScale: {x: 0, y: 0, z: 0}
   originalParent: {fileID: 0}
+--- !u!114 &1889474782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889474778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f118658c022bf5540a9e25e6cf001edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelAudio
+  music: {fileID: 8300000, guid: 350f4beefb4d59c4482d8d613b793eb0, type: 3}
+  loop: 1
+  volume: 1
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &1906467715
 GameObject:
   m_ObjectHideFlags: 0
@@ -4382,6 +4442,7 @@ GameObject:
   - component: {fileID: 1906467716}
   - component: {fileID: 1906467718}
   - component: {fileID: 1906467719}
+  - component: {fileID: 1906467720}
   m_Layer: 0
   m_Name: MarsImage
   m_TagString: Untagged
@@ -4482,6 +4543,23 @@ MonoBehaviour:
   originalPosition: {x: 0, y: 0, z: 0}
   originalScale: {x: 0, y: 0, z: 0}
   originalParent: {fileID: 0}
+--- !u!114 &1906467720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906467715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f118658c022bf5540a9e25e6cf001edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelAudio
+  music: {fileID: 8300000, guid: 4406a6fee31e05a47850959ec746f04b, type: 3}
+  loop: 1
+  volume: 1
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &2027902642
 GameObject:
   m_ObjectHideFlags: 0
@@ -4494,6 +4572,7 @@ GameObject:
   - component: {fileID: 2027902644}
   - component: {fileID: 2027902645}
   - component: {fileID: 2027902646}
+  - component: {fileID: 2027902647}
   m_Layer: 0
   m_Name: CatHeavenImage
   m_TagString: Untagged
@@ -4617,6 +4696,23 @@ MonoBehaviour:
   frameRate: 10
   loop: 1
   playOnStart: 1
+--- !u!114 &2027902647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027902642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f118658c022bf5540a9e25e6cf001edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelAudio
+  music: {fileID: 8300000, guid: 457a2f6cd2c24c341bf0fda9b1cdebb9, type: 3}
+  loop: 1
+  volume: 1
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1 &2046657448
 GameObject:
   m_ObjectHideFlags: 0
@@ -4628,6 +4724,7 @@ GameObject:
   - component: {fileID: 2046657450}
   - component: {fileID: 2046657449}
   - component: {fileID: 2046657451}
+  - component: {fileID: 2046657452}
   m_Layer: 0
   m_Name: GameDevDesk
   m_TagString: Untagged
@@ -4728,6 +4825,23 @@ MonoBehaviour:
   originalPosition: {x: 0, y: 0, z: 0}
   originalScale: {x: 0, y: 0, z: 0}
   originalParent: {fileID: 0}
+--- !u!114 &2046657452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046657448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f118658c022bf5540a9e25e6cf001edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PanelAudio
+  music: {fileID: 8300000, guid: 9d854cb15ef964b41a39f3a8c26ab665, type: 3}
+  loop: 1
+  volume: 1
+  fadeInDuration: 1
+  fadeOutDuration: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
