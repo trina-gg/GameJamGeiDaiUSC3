@@ -1,17 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// 简单的单格 Inventory：同时只允许有一个物体。
+/// 负责：
+/// - 接收 InventoryItem 的 Pickup 请求
+/// - 管理 UI 图标
+/// - 在物品成功使用后清空 inventory
+/// </summary>
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
 
-    [Header("Single Slot")]
-    [Tooltip("唯一的背包 UI 图标脚本（挂在 Canvas/InventoryPanel/InventoryItemImage 上）")]
-    public InventoryItemUI inventoryItemUI;
+    [Header("UI References")]
+    public Image inventorySlotImage;          // UI 上的图标 Image（Screen Space - Overlay Canvas 下）
 
-    private string currentItemId;
-
-    public bool HasItem => !string.IsNullOrEmpty(currentItemId);
-    public string CurrentItemId => currentItemId;
+    [Header("Runtime State")]
+    public InventoryItem currentItem;         // 当前拿着的世界物体（隐藏中）
+    public bool HasItem => currentItem != null;
 
     void Awake()
     {
@@ -22,46 +28,83 @@ public class InventoryManager : MonoBehaviour
         }
         Instance = this;
 
-        if (inventoryItemUI != null)
+        if (inventorySlotImage != null)
         {
-            inventoryItemUI.gameObject.SetActive(false);
-            inventoryItemUI.Clear();
+            inventorySlotImage.enabled = false;
         }
     }
 
     /// <summary>
-    /// 往背包里放一个物品。当前已经有物品时直接忽略（单物品背包）。
+    /// 由 InventoryItem 调用：把物体放进 inventory
     /// </summary>
-    public void AddItem(string itemId, Sprite icon)
+    public void PickupItem(InventoryItem item)
     {
-        if (HasItem)
+        if (item == null || HasItem) return;
+
+        currentItem = item;
+        currentItem.HideInWorld();
+
+        if (inventorySlotImage != null)
         {
-            Debug.Log($"[InventoryManager] Already has item {currentItemId}, ignore add {itemId}");
-            return;
+            inventorySlotImage.sprite = item.iconSprite;
+            inventorySlotImage.enabled = true;
         }
 
-        currentItemId = itemId;
-        Debug.Log($"[InventoryManager] Add item {itemId}");
-
-        if (inventoryItemUI != null)
+        // 如果 InventorySlot 上挂了 InventoryDragUI，可以让它知道当前有物品
+        var drag = inventorySlotImage.GetComponent<InventoryDragUI>();
+        if (drag != null)
         {
-            inventoryItemUI.Setup(itemId, icon);
-            inventoryItemUI.gameObject.SetActive(true);
+            drag.SetHasItem(true);
         }
     }
 
     /// <summary>
-    /// 使用完物品后清空背包。
+    /// 在物品被成功使用（放到正确位置）时调用。
+    /// 让物体回到世界中，并清空 UI。
     /// </summary>
-    public void ClearItem()
+    public void UseItemAtReceiver(ItemReceiver receiver)
     {
-        Debug.Log($"[InventoryManager] Clear item {currentItemId}");
-        currentItemId = null;
+        if (!HasItem || receiver == null) return;
 
-        if (inventoryItemUI != null)
+        // 让接收点根据逻辑决定如何摆放这个物体/是否接受
+        bool accepted = receiver.TryPlaceItem(currentItem);
+        if (!accepted) return;
+
+        // UI 清空
+        if (inventorySlotImage != null)
         {
-            inventoryItemUI.Clear();
-            inventoryItemUI.gameObject.SetActive(false);
+            inventorySlotImage.enabled = false;
         }
+
+        var drag = inventorySlotImage.GetComponent<InventoryDragUI>();
+        if (drag != null)
+        {
+            drag.SetHasItem(false);
+        }
+
+        currentItem = null;
+    }
+
+    /// <summary>
+    /// 如果你想丢弃/重置物品
+    /// </summary>
+    public void DropAndRestoreCurrentItem()
+    {
+        if (!HasItem) return;
+
+        currentItem.RestoreToOriginal();
+
+        if (inventorySlotImage != null)
+        {
+            inventorySlotImage.enabled = false;
+        }
+
+        var drag = inventorySlotImage.GetComponent<InventoryDragUI>();
+        if (drag != null)
+        {
+            drag.SetHasItem(false);
+        }
+
+        currentItem = null;
     }
 }
