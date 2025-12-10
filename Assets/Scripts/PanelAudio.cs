@@ -66,6 +66,15 @@ public class PanelAudio : MonoBehaviour
         }
     }
 
+    // Call this to start music early (before panel switch completes)
+    public void StartMusicEarly()
+    {
+        if (!isPlaying)
+        {
+            PlayMusic();
+        }
+    }
+
     void PlayMusic()
     {
         if (music == null || isPlaying) return;

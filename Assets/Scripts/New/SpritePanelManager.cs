@@ -11,7 +11,7 @@ public class SpritePanelManager : MonoBehaviour
 
     [Header("Camera Settings")]
     public float defaultCameraSize = 707f;
-    public float zoomOutDuration = 2.0f;
+    public float zoomOutDuration = 1.5f;  // Faster zoom out
 
     [Header("Manual Zoom Settings")]
     public float manualZoomAmount = 0.7f;
@@ -20,6 +20,11 @@ public class SpritePanelManager : MonoBehaviour
 
     [Header("Input Settings")]
     public float doubleClickTime = 0.3f;
+
+    [Header("Bounce Effect")]
+    public bool enableBounce = true;
+    public float bounceAmount = 0.02f;     // How much overshoot (2%)
+    public float bounceDuration = 0.15f;   // How long the bounce takes
 
     float lastRightClickTime = 0f;
     float lastLeftClickTime = 0f;
@@ -125,7 +130,7 @@ public class SpritePanelManager : MonoBehaviour
         {
             timer += Time.deltaTime;
             float t = timer / manualZoomSpeed;
-            t = t * t * (3f - 2f * t);
+            t = EaseOutQuart(t);
 
             mainCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
             mainCamera.orthographicSize = Mathf.Lerp(startZoom, targetZoom, t);
@@ -154,7 +159,7 @@ public class SpritePanelManager : MonoBehaviour
         {
             timer += Time.deltaTime;
             float t = timer / manualZoomSpeed;
-            t = t * t * (3f - 2f * t);
+            t = EaseOutQuart(t);
 
             mainCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
             mainCamera.orthographicSize = Mathf.Lerp(startZoom, endZoom, t);
@@ -168,6 +173,24 @@ public class SpritePanelManager : MonoBehaviour
         isTransitioning = false;
     }
 
+    // Easing functions for more natural feel
+    float EaseOutQuart(float t)
+    {
+        return 1f - Mathf.Pow(1f - t, 4f);
+    }
+
+    float EaseInOutCubic(float t)
+    {
+        return t < 0.5f ? 4f * t * t * t : 1f - Mathf.Pow(-2f * t + 2f, 3f) / 2f;
+    }
+
+    float EaseOutBack(float t)
+    {
+        float c1 = 1.70158f;
+        float c3 = c1 + 1f;
+        return 1f + c3 * Mathf.Pow(t - 1f, 3f) + c1 * Mathf.Pow(t - 1f, 2f);
+    }
+
     public void ZoomToPanel(SpritePanel targetPanel, float duration)
     {
         if (isTransitioning || targetPanel == null) return;
@@ -177,8 +200,6 @@ public class SpritePanelManager : MonoBehaviour
     IEnumerator ZoomInCoroutine(SpritePanel targetPanel, float duration)
     {
         isTransitioning = true;
-
-        Debug.Log("ZoomInCoroutine started with duration: " + duration);
 
         SpritePanel parentPanel = currentPanel;
         Vector3 targetWorldPos = targetPanel.transform.position;
@@ -201,8 +222,6 @@ public class SpritePanelManager : MonoBehaviour
         Vector3 endCamPos = new Vector3(targetWorldPos.x, targetWorldPos.y, -10);
         float endCamSize = zoomedCameraSize;
 
-        Debug.Log("Start cam size: " + startCamSize + ", End cam size: " + endCamSize);
-
         // Start target sprite invisible using radial fade
         Material mat = sr.material;
         bool hasRadialFade = mat.HasProperty("_FadeProgress");
@@ -210,7 +229,7 @@ public class SpritePanelManager : MonoBehaviour
         if (hasRadialFade)
         {
             mat.SetFloat("_FadeProgress", 0f);
-            mat.SetFloat("_FadeSoftness", 0.9f); // Almost full softness - very subtle radial
+            mat.SetFloat("_FadeSoftness", 0.9f);
         }
         else
         {
@@ -220,29 +239,30 @@ public class SpritePanelManager : MonoBehaviour
             sr.color = fadeColor;
         }
 
-        // Fade starts at 90% of zoom, completes at 99.9%
-        float fadeStartPercent = 0.90f;
-        float fadeEndPercent = 0.999f;
+        // Fade starts earlier at 75% of zoom, completes at 99%
+        float fadeStartPercent = 0.75f;
+        float fadeEndPercent = 0.99f;
 
         float timer = 0f;
-        int frameCount = 0;
 
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            frameCount++;
             float t = timer / duration;
-            float smoothT = t * t * (3f - 2f * t);
+
+            // Use easing for more natural zoom feel
+            float smoothT = EaseInOutCubic(t);
 
             // Camera zoom
             mainCamera.transform.position = Vector3.Lerp(startCamPos, endCamPos, smoothT);
             mainCamera.orthographicSize = Mathf.Lerp(startCamSize, endCamSize, smoothT);
 
-            // Radial fade from center - only in final moments
+            // Radial fade from center
             if (t >= fadeStartPercent)
             {
                 float fadeT = (t - fadeStartPercent) / (fadeEndPercent - fadeStartPercent);
                 fadeT = Mathf.Clamp01(fadeT);
+                fadeT = EaseOutQuart(fadeT); // Smooth fade
 
                 if (hasRadialFade)
                 {
@@ -259,8 +279,6 @@ public class SpritePanelManager : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("While loop completed after " + frameCount + " frames");
-
         // Ensure fully visible
         if (hasRadialFade)
         {
@@ -276,7 +294,7 @@ public class SpritePanelManager : MonoBehaviour
         mainCamera.transform.position = endCamPos;
         mainCamera.orthographicSize = endCamSize;
 
-        // Switch
+        // Switch panels
         targetPanel.BecomeFullScreen();
         parentPanel.gameObject.SetActive(false);
 
@@ -284,7 +302,48 @@ public class SpritePanelManager : MonoBehaviour
         mainCamera.orthographicSize = defaultCameraSize;
 
         currentPanel = targetPanel;
+
+        // Landing bounce effect
+        if (enableBounce)
+        {
+            yield return StartCoroutine(LandingBounce());
+        }
+
         isTransitioning = false;
+    }
+
+    IEnumerator LandingBounce()
+    {
+        // Get current panel's transform for bounce
+        Transform panelTransform = currentPanel.transform;
+        Vector3 normalScale = panelTransform.localScale;
+        Vector3 bounceScale = normalScale * (1f + bounceAmount);
+
+        // Bounce out (scale up slightly)
+        float timer = 0f;
+        float halfBounce = bounceDuration / 2f;
+
+        while (timer < halfBounce)
+        {
+            timer += Time.deltaTime;
+            float t = timer / halfBounce;
+            t = EaseOutQuart(t);
+            panelTransform.localScale = Vector3.Lerp(normalScale, bounceScale, t);
+            yield return null;
+        }
+
+        // Bounce back (scale back to normal)
+        timer = 0f;
+        while (timer < halfBounce)
+        {
+            timer += Time.deltaTime;
+            float t = timer / halfBounce;
+            t = EaseInOutCubic(t);
+            panelTransform.localScale = Vector3.Lerp(bounceScale, normalScale, t);
+            yield return null;
+        }
+
+        panelTransform.localScale = normalScale;
     }
 
     void GoBack()
@@ -331,25 +390,28 @@ public class SpritePanelManager : MonoBehaviour
         Vector3 endCamPos = new Vector3(0, 0, -10);
         float endCamSize = defaultCameraSize;
 
-        // Fade out completes at 20% of zoom out (reverse of zoom in)
-        float fadeEndPercent = 0.20f;
+        // Fade out completes at 25% of zoom out
+        float fadeEndPercent = 0.25f;
 
         float timer = 0f;
         while (timer < zoomOutDuration)
         {
             timer += Time.deltaTime;
             float t = timer / zoomOutDuration;
-            float smoothT = t * t * (3f - 2f * t);
+
+            // Use easing for more natural zoom feel
+            float smoothT = EaseInOutCubic(t);
 
             mainCamera.transform.position = Vector3.Lerp(startCamPos, endCamPos, smoothT);
             mainCamera.orthographicSize = Mathf.Lerp(startCamSize, endCamSize, smoothT);
 
-            // Radial fade out (reverse - from 1 to 0) at the START of zoom out
+            // Radial fade out at the START of zoom out
             if (t <= fadeEndPercent)
             {
                 float fadeT = t / fadeEndPercent;
                 fadeT = Mathf.Clamp01(fadeT);
-                float fadeValue = 1f - fadeT; // Reverse: 1 -> 0
+                fadeT = EaseOutQuart(fadeT);
+                float fadeValue = 1f - fadeT;
 
                 if (hasRadialFade)
                 {
