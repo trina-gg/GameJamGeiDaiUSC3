@@ -822,7 +822,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -6726820512407343739, guid: 78cb11b0d63e6774cb9b4e6c52585040, type: 3}
+  m_Sprite: {fileID: -3012830872269178771, guid: 8093af2c526b8bc4f93e3f1553ffa635, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -862,7 +862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PanelBackgroundVariant
   defaultSprite: {fileID: 0}
-  withoutRocketSprite: {fileID: -6726820512407343739, guid: ecb0264955b25fd4390df63ccb7295c1, type: 3}
+  withoutRocketSprite: {fileID: -8403103795407400533, guid: b790767592c37fc49940610cc40c0c84, type: 3}
 --- !u!1 &455491754
 GameObject:
   m_ObjectHideFlags: 0
@@ -4344,7 +4344,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: -4896556286504235541, guid: e7935681a0e64344eab55261e5d97e65, type: 3}
+  m_Sprite: {fileID: 8200238435722194727, guid: c1fd4d3aaddd1e44ba8e5cd07e946e0a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
