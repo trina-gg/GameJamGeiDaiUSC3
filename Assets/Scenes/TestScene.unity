@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: 276012210}
   - component: {fileID: 276012212}
   - component: {fileID: 276012211}
+  - component: {fileID: 276012213}
   m_Layer: 0
   m_Name: EndGame
   m_TagString: Untagged
@@ -518,6 +519,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &276012213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276012209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aed789598101a245b09ad5f01d4d61b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteAnimator
+  frames:
+  - {fileID: 1414704450425801944, guid: 52ca3597ed7b4834b8e18251765a3a6e, type: 3}
+  - {fileID: 86251067471011972, guid: c6b48d89ccc9db04cb83c4b4ad614d0a, type: 3}
+  - {fileID: 6297255180051562867, guid: bac4abb4217c8ff4da292ef858ce2b42, type: 3}
+  - {fileID: 2588831116186523031, guid: 6edb80fbaedacec469126d88a2f5748c, type: 3}
+  - {fileID: 1545446107546801431, guid: 8dc3d0722a26ff544a1262bf4fd22951, type: 3}
+  - {fileID: -5691884437048652187, guid: dc43f5dcebbd26445806e474c9f64eda, type: 3}
+  frameRate: 10
+  loop: 1
+  playOnStart: 1
 --- !u!1 &323936175
 GameObject:
   m_ObjectHideFlags: 0
@@ -777,7 +800,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c178ab655ad7d3c41acf6a0d5ed1b729, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -799,7 +822,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 344899800104417998, guid: 4d2e25658ba909d4cab2e494083b891c, type: 3}
+  m_Sprite: {fileID: -6726820512407343739, guid: 78cb11b0d63e6774cb9b4e6c52585040, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1254,7 +1277,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 1889474781}
   doubleClickTime: 0.35
-  zoomDuration: 1
+  zoomDuration: 4
 --- !u!61 &695118987
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1829,7 +1852,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c178ab655ad7d3c41acf6a0d5ed1b729, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1939,7 +1962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 276012211}
   doubleClickTime: 0.35
-  zoomDuration: 1
+  zoomDuration: 4
 --- !u!61 &984931403
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2033,7 +2056,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 1192912760}
   doubleClickTime: 0.35
-  zoomDuration: 1
+  zoomDuration: 4
 --- !u!61 &1010198225
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2092,7 +2115,7 @@ GameObject:
   - component: {fileID: 1012373879}
   - component: {fileID: 1012373878}
   - component: {fileID: 1012373877}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Rocket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2108,8 +2131,8 @@ Transform:
   m_GameObject: {fileID: 1012373875}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.17, y: 1.12, z: 0}
-  m_LocalScale: {x: 2.425, y: 3.125, z: 1}
+  m_LocalPosition: {x: 2.2500038, y: 1.1199951, z: 0}
+  m_LocalScale: {x: 2.4250004, y: 3.125, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 380943436}
@@ -2238,7 +2261,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 6
   m_Sprite: {fileID: 248147469303106533, guid: 4bbb48a0f89ff3442a1234aca2240d30, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
@@ -2515,7 +2538,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 961954416}
   doubleClickTime: 0.35
-  zoomDuration: 3
+  zoomDuration: 4
 --- !u!61 &1111963940
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2622,7 +2645,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c178ab655ad7d3c41acf6a0d5ed1b729, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2824,7 +2847,7 @@ MonoBehaviour:
   mainCamera: {fileID: 1270298513}
   currentPanel: {fileID: 2046657451}
   defaultCameraSize: 5.4
-  zoomOutDuration: 2
+  zoomOutDuration: 4
   manualZoomAmount: 0.7
   manualZoomSpeed: 0.3
   minManualZoom: 1
@@ -3050,8 +3073,8 @@ Camera:
   m_GameObject: {fileID: 1270298511}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -3800,7 +3823,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 1906467719}
   doubleClickTime: 0.35
-  zoomDuration: 3
+  zoomDuration: 4
 --- !u!61 &1593345523
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3894,7 +3917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 380943438}
   doubleClickTime: 0.35
-  zoomDuration: 3
+  zoomDuration: 4
 --- !u!61 &1744710995
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4081,7 +4104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 2027902645}
   doubleClickTime: 0.35
-  zoomDuration: 3
+  zoomDuration: 4
 --- !u!61 &1785851196
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4299,7 +4322,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c178ab655ad7d3c41acf6a0d5ed1b729, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4410,7 +4433,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c178ab655ad7d3c41acf6a0d5ed1b729, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4487,7 +4510,7 @@ Transform:
   m_GameObject: {fileID: 2027902642}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.02, y: 2.31, z: 0}
+  m_LocalPosition: {x: -3.004, y: 2.496, z: 0}
   m_LocalScale: {x: 0.01111199, y: 0.01111199, z: 0.01111199}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -4524,7 +4547,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: c178ab655ad7d3c41acf6a0d5ed1b729, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
