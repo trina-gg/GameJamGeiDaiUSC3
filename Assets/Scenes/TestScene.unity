@@ -2729,7 +2729,7 @@ Transform:
   m_GameObject: {fileID: 1192912759}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.23, y: -2.33, z: 0}
+  m_LocalPosition: {x: -5.07, y: -1.65, z: 0}
   m_LocalScale: {x: 0.007, y: 0.007000156, z: 0.0003500078}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2894,6 +2894,9 @@ MonoBehaviour:
   manualZoomSpeed: 0.3
   minManualZoom: 1
   doubleClickTime: 0.3
+  enableBounce: 1
+  bounceAmount: 0.02
+  bounceDuration: 0.15
 --- !u!4 &1260427151
 Transform:
   m_ObjectHideFlags: 0
