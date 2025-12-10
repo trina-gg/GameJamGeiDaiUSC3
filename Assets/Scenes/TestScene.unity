@@ -1398,7 +1398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHotspot
   targetPanel: {fileID: 1906467719}
   doubleClickTime: 0.35
-  zoomDuration: 1
+  zoomDuration: 3
 --- !u!61 &1593345523
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -11,13 +11,21 @@ public class SpritePanelManager : MonoBehaviour
 
     [Header("Camera Settings")]
     public float defaultCameraSize = 707f;  // Camera size when viewing a panel at full size
+    public float zoomOutDuration = 2.0f;    // How long zoom out takes
+
+    [Header("Manual Zoom Settings")]
+    public float manualZoomAmount = 0.7f;   // How much to zoom (0.7 = 70% of current size)
+    public float manualZoomSpeed = 0.3f;    // How fast manual zoom happens
+    public float minManualZoom = 1f;        // Minimum camera size for manual zoom
 
     [Header("Input Settings")]
     public float doubleClickTime = 0.3f;
 
     // Private
     float lastRightClickTime = 0f;
+    float lastLeftClickTime = 0f;
     bool isTransitioning = false;
+    bool hotspotClaimedClick = false;
 
     void Awake()
     {
@@ -40,17 +48,55 @@ public class SpritePanelManager : MonoBehaviour
         {
             HandleInput();
         }
+
+        // Reset hotspot claim each frame
+        hotspotClaimedClick = false;
+    }
+
+    // Called by SpriteHotspot when it handles a click
+    public void ClaimClick()
+    {
+        hotspotClaimedClick = true;
     }
 
     void HandleInput()
     {
-        // Right click - go back
+        // Left click - manual zoom in
+        if (Input.GetMouseButtonDown(0))
+        {
+            float t = Time.time - lastLeftClickTime;
+            if (t <= doubleClickTime && t > 0)
+            {
+                // Double left click - manual zoom (if hotspot didn't claim it)
+                if (!hotspotClaimedClick)
+                {
+                    ManualZoomIn();
+                }
+                lastLeftClickTime = 0f;
+            }
+            else
+            {
+                lastLeftClickTime = Time.time;
+            }
+        }
+
+        // Right click - zoom out or go back
         if (Input.GetMouseButtonDown(1))
         {
             float t = Time.time - lastRightClickTime;
             if (t <= doubleClickTime && t > 0)
             {
-                GoBack();
+                // Double right click - go back or zoom out
+                if (mainCamera.orthographicSize < defaultCameraSize - 0.1f)
+                {
+                    // We're manually zoomed in, zoom back to default
+                    StartCoroutine(ManualZoomOut());
+                }
+                else
+                {
+                    // We're at default zoom, go back to parent panel
+                    GoBack();
+                }
                 lastRightClickTime = 0f;
             }
             else
@@ -58,6 +104,82 @@ public class SpritePanelManager : MonoBehaviour
                 lastRightClickTime = Time.time;
             }
         }
+    }
+
+    void ManualZoomIn()
+    {
+        // Get mouse position in world space
+        Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = -10;
+
+        // Calculate new zoom level
+        float newZoom = mainCamera.orthographicSize * manualZoomAmount;
+        newZoom = Mathf.Max(newZoom, minManualZoom);
+
+        // Don't zoom if already at min
+        if (mainCamera.orthographicSize <= minManualZoom + 0.1f)
+            return;
+
+        StartCoroutine(SmoothManualZoom(mouseWorld, newZoom));
+    }
+
+    IEnumerator SmoothManualZoom(Vector3 targetPos, float targetZoom)
+    {
+        isTransitioning = true;
+
+        Vector3 startPos = mainCamera.transform.position;
+        float startZoom = mainCamera.orthographicSize;
+
+        // Move camera toward mouse position (but not all the way)
+        Vector3 endPos = Vector3.Lerp(startPos, targetPos, 0.3f);
+        endPos.z = -10;
+
+        float timer = 0f;
+        while (timer < manualZoomSpeed)
+        {
+            timer += Time.deltaTime;
+            float t = timer / manualZoomSpeed;
+            t = t * t * (3f - 2f * t);
+
+            mainCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
+            mainCamera.orthographicSize = Mathf.Lerp(startZoom, targetZoom, t);
+
+            yield return null;
+        }
+
+        mainCamera.transform.position = endPos;
+        mainCamera.orthographicSize = targetZoom;
+
+        isTransitioning = false;
+    }
+
+    IEnumerator ManualZoomOut()
+    {
+        isTransitioning = true;
+
+        Vector3 startPos = mainCamera.transform.position;
+        float startZoom = mainCamera.orthographicSize;
+
+        Vector3 endPos = new Vector3(0, 0, -10);
+        float endZoom = defaultCameraSize;
+
+        float timer = 0f;
+        while (timer < manualZoomSpeed)
+        {
+            timer += Time.deltaTime;
+            float t = timer / manualZoomSpeed;
+            t = t * t * (3f - 2f * t);
+
+            mainCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
+            mainCamera.orthographicSize = Mathf.Lerp(startZoom, endZoom, t);
+
+            yield return null;
+        }
+
+        mainCamera.transform.position = endPos;
+        mainCamera.orthographicSize = endZoom;
+
+        isTransitioning = false;
     }
 
     public void ZoomToPanel(SpritePanel targetPanel, float duration)
@@ -182,7 +304,7 @@ public class SpritePanelManager : MonoBehaviour
         float endCamSize = defaultCameraSize;
 
         // Animate zoom out
-        float duration = 1.0f;
+        float duration = zoomOutDuration;
         float timer = 0f;
 
         while (timer < duration)

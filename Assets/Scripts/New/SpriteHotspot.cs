@@ -28,6 +28,7 @@ public class SpriteHotspot : MonoBehaviour
         if (isDoubleClick)
         {
             Debug.Log("Double-click on " + gameObject.name + " -> zooming to " + targetPanel.name);
+            SpritePanelManager.Instance.ClaimClick();
             SpritePanelManager.Instance.ZoomToPanel(targetPanel, zoomDuration);
         }
     }
